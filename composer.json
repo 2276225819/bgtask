@@ -1,0 +1,25 @@
+{
+    "name": "xlx/bgtask",
+    "description":"background task",
+    "authors": [
+        {
+            "name": "2276225819",
+            "email": "2276225819@qq.com"
+        }
+    ],
+    "require": {
+        "opis/closure":"*",
+        "react/promise":"*",
+        "workerman/workerman":"*",
+        "workerman/globaldata":"*"
+    }, 
+    "autoload":{
+        "psr-4":{
+            "Windows\\":"./windows",
+            "":"./src"
+        },
+        "files": [
+            "./src/helper.php"
+        ]
+    }
+}
