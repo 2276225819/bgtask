@@ -1,5 +1,6 @@
 <?php
 namespace xlx\Client;
+
 use Workerman\Events\EventInterface;
 use Opis\Closure\SerializableClosure;
 
@@ -9,7 +10,7 @@ class Task implements \React\Promise\PromiseInterface
     public static $timeout=-1;
 
     /**
-     * @var  React\Promise\Deferred
+     * @var \React\Promise\Deferred
      */
     public $defer;
 
@@ -39,8 +40,9 @@ class Task implements \React\Promise\PromiseInterface
         $task = new self();
         $obj = new SerializableClosure($fn);
         $task->hash =  md5( $obj->getReflector()->getCode() );
-        $task->fnstr = serialize($obj); 
+        $task->fnstr = serialize($obj);
         $task->start();
+
         return $task;
     }
     /**
@@ -69,11 +71,12 @@ class Task implements \React\Promise\PromiseInterface
     public static function whenAll($tasks)
     {
         $task = new self();
-        $task->defer = new React\Promise\Deferred();
+        $task->defer = new \React\Promise\Deferred();
         \React\Promise\all($tasks)->then(function ($data) use ($task) {
             $task->result = $data;
             $task->defer->resolve($data);
         }, function ($data) use ($task) {
+            $task->error = $data;
             $task->defer->reject($data);
         });
         return $task;
@@ -81,11 +84,12 @@ class Task implements \React\Promise\PromiseInterface
     public static function whenAny($tasks)
     {
         $task = new self();
-        $task->defer = new React\Promise\Deferred();
+        $task->defer = new \React\Promise\Deferred();
         \React\Promise\any($tasks)->then(function ($data) use ($task) {
             $task->result = $data;
             $task->defer->resolve($data);
         }, function ($data) use ($task) {
+            $task->error = $data;
             $task->defer->reject($data);
         });
         return $task;
@@ -104,6 +108,9 @@ class Task implements \React\Promise\PromiseInterface
             }
             foreach ($tasks as $k => $task) {
                 if (isset($task->result)) {
+                    unset($tasks[$k]);
+                }
+                if (isset($task->error)) {
                     unset($tasks[$k]);
                 }
             }
@@ -127,22 +134,25 @@ class Task implements \React\Promise\PromiseInterface
             }
         }
     }
-    public static function sleep($time){
-        return new \React\Promise\Promise(function($next)use($time){
-            \Workerman\Lib\Timer::add($time,$next,[],false);
+    public static function sleep($time)
+    {
+        return new \React\Promise\Promise(function ($next) use ($time) {
+            \Workerman\Lib\Timer::add($time, $next, [], false);
         });
     }
 
-    public static function send($hash,...$args){ 
-        \Channel\Client::publish($hash, $args); 
+    public static function send($hash, ...$args)
+    {
+        \Channel\Client::publish($hash, $args);
     }
-    public static function received(){ 
+    public static function received()
+    {
         list($first) = debug_backtrace();
-        if($first['class']==Task::class && substr($first['file'],0,10)=='closure://'){ 
-            $hash =  md5( substr($first['file'],10) ); 
-            return \xlx\Server\Task::popup($hash); 
-        } 
-        throw new Exception("Error Processing Request", 1); 
+        if ($first['class']==Task::class && substr($first['file'], 0, 10)=='closure://') {
+            $hash =  md5( substr($first['file'], 10) );
+            return \xlx\Server\Task::popup($hash);
+        }
+        throw new Exception("Error Processing Request", 1);
     }
     
 
@@ -188,10 +198,16 @@ class Task implements \React\Promise\PromiseInterface
     }
     public function getResult()
     {
-        if (!$this->defer) {
+        if (empty($this->defer)) {
             $this->start();
         }
+        
         $this->wait();
-        return $this->result;
+        
+        if (isset($this->error)) {
+            throw $this->error;
+        }else{
+            return $this->result; 
+        }
     }
 }

@@ -1,11 +1,12 @@
 <?php  
-namespace xlx;
+namespace xlx\Client;
 class WaitEvent extends \Workerman\Events\Select
 {     
+    public $_selectTimeout=500*1000;
     public function event_select(){
         $read = $this->_readFds;
         $write = $except = [];
-        $ret =  @stream_select($read, $write, $except, 0, (int)($this->_selectTimeout.''));
+        $ret =  @stream_select($read, $write, $except, 0, (int)($this->_selectTimeout.'')); 
         if($ret){
             return $read;
         }

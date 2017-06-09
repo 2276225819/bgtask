@@ -1,0 +1,28 @@
+2017-06-09 09:35:05 Error: Class 'Task' not found in closure://function(){
+        echo "!";  
+        //noblock sleep 
+        yield \Task::sleep(5);
+        return 1;
+    }:5
+Stack trace:
+#0 [internal function]: Opis\Closure\SerializableClosure->{closure}()
+#1 C:\Users\h\Desktop\bgtask\src\helper.php(10): Generator->valid()
+#2 closure://function (...$args) use ($fn) {
+                return \xlx\co($fn, ...$args);
+            }(3): xlx\co(Object(Generator))
+#3 [internal function]: Opis\Closure\SerializableClosure->{closure}()
+#4 C:\Users\h\Desktop\bgtask\vendor\opis\closure\src\SerializableClosure.php(107): call_user_func_array(Object(Closure), Array)
+#5 C:\Users\h\Desktop\bgtask\src\Server\Task.php(49): Opis\Closure\SerializableClosure->__invoke()
+#6 C:\Users\h\Desktop\bgtask\boot\server-task.php(27): xlx\Server\Task::run('C:32:"Opis\\Clos...')
+#7 [internal function]: {closure}(Object(Workerman\Connection\TcpConnection), '["xlx\\\\Client\\\\...')
+#8 C:\Users\h\Desktop\bgtask\src\helper.php(10): Generator->valid()
+#9 C:\Users\h\Desktop\bgtask\src\helper.php(43): xlx\co(Object(Generator), Object(Workerman\Connection\TcpConnection), '["xlx\\\\Client\\\\...')
+#10 [internal function]: xlx\co\{closure}(Object(Workerman\Connection\TcpConnection), '["xlx\\\\Client\\\\...')
+#11 C:\Users\h\Desktop\bgtask\vendor\workerman\workerman\Connection\TcpConnection.php(503): call_user_func(Object(Closure), Object(Workerman\Connection\TcpConnection), '["xlx\\\\Client\\\\...')
+#12 [internal function]: Workerman\Connection\TcpConnection->baseRead(Resource id #51)
+#13 C:\Users\h\Desktop\bgtask\src\Windows\Events\Select.php(246): call_user_func_array(Array, Array)
+#14 C:\Users\h\Desktop\bgtask\src\Windows\Worker.php(808): xlx\Windows\Events\Select->loop()
+#15 C:\Users\h\Desktop\bgtask\src\Windows\Worker.php(457): xlx\Windows\Worker->run()
+#16 C:\Users\h\Desktop\bgtask\src\Windows\Worker.php(366): xlx\Windows\Worker::runAllWorkers()
+#17 C:\Users\h\Desktop\bgtask\boot\server-task.php(38): xlx\Windows\Worker::runAll()
+#18 {main}
