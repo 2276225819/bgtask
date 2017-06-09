@@ -1,7 +1,9 @@
 <?php
+namespace xlx\Client;
 use Workerman\Events\EventInterface;
+use Opis\Closure\SerializableClosure;
 
-class Task implements React\Promise\PromiseInterface
+class Task implements \React\Promise\PromiseInterface
 {
     public static $addr="tcp://127.0.0.1:33445";
     public static $timeout=-1;
@@ -10,6 +12,7 @@ class Task implements React\Promise\PromiseInterface
      * @var  React\Promise\Deferred
      */
     public $defer;
+
     /**
      * Primary Method
      * @return EventInterface
@@ -34,7 +37,9 @@ class Task implements React\Promise\PromiseInterface
     public static function run($fn)
     {
         $task = new self();
-        $task->fnstr=serialize(new Opis\Closure\SerializableClosure($fn));
+        $obj = new SerializableClosure($fn);
+        $task->hash =  md5( $obj->getReflector()->getCode() );
+        $task->fnstr = serialize($obj); 
         $task->start();
         return $task;
     }
@@ -45,7 +50,7 @@ class Task implements React\Promise\PromiseInterface
      */
     public static function all($tasks)
     {
-        return React\Promise\all($tasks);
+        return \React\Promise\all($tasks);
     }
     /**
      * Remote Access
@@ -54,7 +59,7 @@ class Task implements React\Promise\PromiseInterface
      */
     public static function any($tasks)
     {
-        return React\Promise\all($tasks);
+        return \React\Promise\all($tasks);
     }
     /**
      * Local Access
@@ -65,7 +70,7 @@ class Task implements React\Promise\PromiseInterface
     {
         $task = new self();
         $task->defer = new React\Promise\Deferred();
-        React\Promise\all($tasks)->then(function ($data) use ($task) {
+        \React\Promise\all($tasks)->then(function ($data) use ($task) {
             $task->result = $data;
             $task->defer->resolve($data);
         }, function ($data) use ($task) {
@@ -77,7 +82,7 @@ class Task implements React\Promise\PromiseInterface
     {
         $task = new self();
         $task->defer = new React\Promise\Deferred();
-        React\Promise\any($tasks)->then(function ($data) use ($task) {
+        \React\Promise\any($tasks)->then(function ($data) use ($task) {
             $task->result = $data;
             $task->defer->resolve($data);
         }, function ($data) use ($task) {
@@ -123,10 +128,23 @@ class Task implements React\Promise\PromiseInterface
         }
     }
     public static function sleep($time){
-        return new React\Promise\Promise(function($next)use($time){
+        return new \React\Promise\Promise(function($next)use($time){
             \Workerman\Lib\Timer::add($time,$next,[],false);
         });
     }
+
+    public static function send($hash,...$args){ 
+        \Channel\Client::publish($hash, $args); 
+    }
+    public static function received(){ 
+        list($first) = debug_backtrace();
+        if($first['class']==Task::class && substr($first['file'],0,10)=='closure://'){ 
+            $hash =  md5( substr($first['file'],10) ); 
+            return \xlx\Server\Task::popup($hash); 
+        } 
+        throw new Exception("Error Processing Request", 1); 
+    }
+    
 
     public function wait()
     {
@@ -144,7 +162,7 @@ class Task implements React\Promise\PromiseInterface
     }
     public function start()
     {
-        $this->defer = new React\Promise\Deferred();
+        $this->defer = new \React\Promise\Deferred();
         $this->connection = @stream_socket_client(self::$addr, $code, $msg, self::$timeout);
         if (!$this->connection) {
             $this->defer->reject(new \Exception($msg, $code));

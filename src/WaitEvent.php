@@ -1,4 +1,5 @@
 <?php  
+namespace xlx;
 class WaitEvent extends \Workerman\Events\Select
 {     
     public function event_select(){

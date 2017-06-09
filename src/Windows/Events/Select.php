@@ -11,7 +11,7 @@
  * @link http://www.workerman.net/
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Windows\Events;
+namespace xlx\Windows\Events;
 
 class Select implements \Workerman\Events\EventInterface
 {
@@ -261,18 +261,7 @@ class Select implements \Workerman\Events\EventInterface
                 }
             }
 
-            // 这些描述符可写，执行对应描述符的写回调函数
-            if($except)
-            {
-                foreach($except as $fd)
-                {
-                    $fd_key = (int) $fd;
-                    if(isset($this->_allEvents[$fd_key][self::EV_EXCEPT]))
-                    {
-                        call_user_func_array($this->_allEvents[$fd_key][self::EV_EXCEPT][0], array($this->_allEvents[$fd_key][self::EV_EXCEPT][1]));
-                    }
-                }
-            }
+           
         }
     }
 

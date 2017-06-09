@@ -1,0 +1,48 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+
+		{
+			"name": "Listen for XDebug",
+			"type": "php",
+			"request": "launch",
+			"port": 9900
+		}, 
+		{
+			"name": "Launch currently open script",
+			"type": "php",
+			"request": "launch",
+			"program": "${file}",
+			"cwd": "${fileDirname}",
+			"port": 9999,
+			"runtimeExecutable": "C:/phpstudy/php/php-7.0.12-nts/php.exe"
+		} ,
+		{
+			"name": "interface.php",
+			"type": "php",
+			"request": "launch",
+			"program": "${workspaceRoot}/interface.php",
+			"cwd": "${workspaceRoot}/",
+			"port": 9999,
+			"runtimeExecutable": "C:/phpstudy/php/php-7.0.12-nts/php.exe"
+		}, 
+		{
+			"name": "test.php",
+			"type": "php",
+			"request": "launch",
+			"program": "${workspaceRoot}/test.php",
+			"cwd": "${workspaceRoot}/",
+			"port": 9999,
+			"runtimeExecutable": "C:/phpstudy/php/php-7.0.12-nts/php.exe"
+		}, 
+		{
+			"name": "test2.php",
+			"type": "php",
+			"request": "launch",
+			"program": "${workspaceRoot}/test2.php",
+			"cwd": "${workspaceRoot}/",
+			"port": 9999,
+			"runtimeExecutable": "C:/phpstudy/php/php-7.0.12-nts/php.exe"
+		}
+	]
+}

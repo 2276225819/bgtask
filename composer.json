@@ -11,13 +11,17 @@
     "require": {
         "opis/closure":"*",
         "react/promise":"*",
+        "rdlowrey/auryn":"*", 
         "workerman/workerman":"*",
-        "workerman/globaldata":"*"
+        "workerman/globaldata":"*",
+        "workerman/channel":"*"
     }, 
+    "bin": [
+        "bin/bgtask"
+    ],
     "autoload":{
-        "psr-4":{
-            "Windows\\":"./windows",
-            "":"./src"
+        "psr-4":{ 
+            "xlx\\":"./src"
         },
         "files": [
             "./src/helper.php"

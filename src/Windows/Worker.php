@@ -11,9 +11,9 @@
  * @link http://www.workerman.net/
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Windows;
+namespace xlx\Windows;
 
-require_once __DIR__ . '/../vendor/workerman/workerman/Lib/Constants.php';
+//require_once __DIR__ . '/../vendor/workerman/workerman/Lib/Constants.php';
 
 use \Workerman\Events\Libevent;
 use \Workerman\Events\Event;

@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__."/../vendor/autoload.php";    
 if(strpos(strtolower(PHP_OS), 'win') === 0){
-    class_alias(\Workerman\Windows\Worker::class,\Workerman\Worker::class); 
+    class_alias(\xlx\Windows\Worker::class,\Workerman\Worker::class);
+    class_alias(\xlx\Windows\Events\Select::class,\Workerman\Events\Select::class);
 } 
  
 $task = new \Workerman\Worker();
